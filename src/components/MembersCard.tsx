@@ -8,37 +8,60 @@ import {
   Link,
   Image,
 } from "@nextui-org/react";
+import { FC } from "react";
+import Icons from "./Icons";
 
-export default function MembersCard() {
+interface MembersCardProps {
+  name: string;
+  email: string;
+  links: string;
+  bio: string;
+  skills: string;
+}
+
+const MembersCard: FC<MembersCardProps> = ({
+  name,
+  email,
+  links,
+  bio,
+  skills,
+}) => {
   return (
     <Card className="max-w-[400px]">
       <CardHeader className="flex gap-4">
         <Image
           alt="nextui logo"
-          height={40}
+          height={10}
           radius="sm"
-          src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-          width={40}
+          src="../beast-pfp.png"
+          width={80}
         />
         <div className="flex flex-col">
-          <p className="text-md">NextUI</p>
-          <p className="text-small text-default-500">nextui.org</p>
+          <p className="text-md">{name}</p>
+          <div className="flex flex-row gap-1">
+            <Icons.Link className="mt-[0.33em] h-3 w-3" />
+            <Link isExternal showAnchorIcon size="sm" href={links}>
+              {links}
+            </Link>
+          </div>
+          <div className="flex flex-row gap-1">
+            <Icons.Mails className="mt-[0.33em] h-3 w-3" />
+            <p className="text-sm"> {email}</p>
+          </div>
         </div>
       </CardHeader>
       <Divider className="h-[1px] bg-white" />
       <CardBody>
-        <p>Make beautiful websites regardless of your design experience.</p>
+        <div className="inline-block">
+          <p>{bio}</p>
+        </div>
       </CardBody>
       <Divider />
       <CardFooter>
-        <Link
-          isExternal
-          showAnchorIcon
-          href="https://github.com/nextui-org/nextui"
-        >
-          Visit source code on GitHub.
-        </Link>
+        <p> {skills}</p>
       </CardFooter>
     </Card>
   );
-}
+};
+
+export default MembersCard;

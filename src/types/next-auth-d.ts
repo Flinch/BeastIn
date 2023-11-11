@@ -6,6 +6,7 @@ type UserId = string;
 declare module "next-auth/jwt" {
   interface JWT {
     id: UserId;
+    isVisible: boolean;
   }
 }
 
@@ -13,6 +14,7 @@ declare module "next-auth" {
   interface Session {
     user: User & {
       id: UserId;
+      isVisible: boolean;
     };
   }
 }

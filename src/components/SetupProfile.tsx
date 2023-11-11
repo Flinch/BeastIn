@@ -11,9 +11,10 @@ const SetupProfile: FC<SetupProfileProps> = async () => {
   const user = await getServerSession(authOptions);
 
   return (
-    <div className="flex flex-col justify-center container items-center">
+    <div className="flex flex-col justify-center container items-center pt-[200px]">
       <LargeHeading size="default"> Welcome, {user?.user.name}</LargeHeading>
-      <Paragraph>Setup your profile below to get started</Paragraph>
+      <br />
+      <Paragraph>Setup your beast card below to get started</Paragraph>
       <div className="flex justify-center pt-4">
         <SetupProfileForm name={user?.user.name!} email={user?.user.email!} />
       </div>

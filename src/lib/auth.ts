@@ -7,8 +7,6 @@ function getGoogleCredentials(): { clientId: string; clientSecret: string } {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-  console.log(`Client ID: ${clientId}`);
-
   if (!clientId || clientId.length === 0) {
     throw new Error("Google client ID is missing");
   }
@@ -44,6 +42,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.picture;
+        session.user.isVisible = token.isVisible;
       }
       return session;
     },
@@ -64,6 +63,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         image: dbUser.image,
+        isVisible: dbUser.isVisible,
       };
     },
     redirect() {

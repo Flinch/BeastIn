@@ -24,11 +24,12 @@ model User {
   sessions      Session[]
   APIKey        APIKey[]
   Profile       Profile?
+  isVisible     Boolean   @default(false)
 }
 
 model Profile {
   id     String @id @default(cuid())
-  bio    String
+  bio    String @db.Text
   skills String
   link   String
   user   User   @relation(fields: [userId], references: [id])

@@ -10,3 +10,8 @@ export interface UpdateAPIData {
   error: string | ZodIssue[] | null;
   updatedProfile: Profile | null;
 }
+
+export interface UpdateVisibilityData {
+  error: string | ZodIssue[] | null;
+  updatedVisibility: User | null;
+}

@@ -19,7 +19,7 @@ const Page = async () => {
   });
 
   return (
-    <div className="flex justify-center pt-[200px]">
+    <div className="flex justify-center pt-[100px]">
       {getUserProfile.length === 0 ? <SetupProfile /> : <Profile />}
     </div>
   );
