@@ -17,6 +17,7 @@ import { Textarea } from "@nextui-org/react";
 import ButtonHome from "./Button";
 import { useRouter } from "next/navigation";
 import { set } from "lodash";
+import { toast } from "react-toastify";
 
 interface SetupProfileFormProps {
   name: string;
@@ -29,21 +30,31 @@ const SetupProfileForm: FC<SetupProfileFormProps> = ({ name, email }) => {
   const [skills, setSkills] = useState("");
   const [bio, setBio] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const onSubmitForm = async () => {
-    console.log("here");
-    setIsModalOpen(false);
-    // event.preventDefault();
-    const profile = { link, skills, bio };
-    const response = await fetch("/api/create-profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(profile),
-    });
-    const data = await response.json();
+    try {
+      console.log("here");
+      setIsModalOpen(false);
+      // event.preventDefault();
+      const profile = { link, skills, bio };
+      const response = await fetch("/api/create-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      });
+      const data = await response.json().then(() => {
+        setIsLoading(false);
+        router.refresh();
+        toast.success("Profile Created!");
+      });
 
-    router.refresh();
+      router.refresh();
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Something went wrong, please try again");
+    }
   };
 
   const ToggleModalStateTrue = () => {
@@ -58,11 +69,11 @@ const SetupProfileForm: FC<SetupProfileFormProps> = ({ name, email }) => {
       {" "}
       <ButtonHome
         onClick={ToggleModalStateTrue}
-        isLoading={false}
+        isLoading={isLoading}
         variant="home"
         className="mt-[25px]"
       >
-        Setup Your Beast Card
+        {isLoading ? "Creating" : "Setup Your Beast Card"}
       </ButtonHome>
       <form onSubmit={onSubmitForm}>
         <Modal

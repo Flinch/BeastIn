@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Button from "@/components/Button";
 import Link from "next/link";
+import Image from "next/image";
 
 const Page = async () => {
   const session = await getServerSession(authOptions);

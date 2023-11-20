@@ -1,4 +1,4 @@
-import { Profile } from "@prisma/client";
+import { Post, Profile } from "@prisma/client";
 import type { ZodIssue } from "zod";
 
 export interface CreateAPIData {
@@ -14,4 +14,9 @@ export interface UpdateAPIData {
 export interface UpdateVisibilityData {
   error: string | ZodIssue[] | null;
   updatedVisibility: User | null;
+}
+
+export interface CreatePost {
+  error: string | ZodIssue[] | null;
+  createdPost: Post | null;
 }

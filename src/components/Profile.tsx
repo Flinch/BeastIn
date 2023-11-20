@@ -8,6 +8,7 @@ import UpdateProfileForm from "./UpdateProfileForm";
 import MembersCard from "./MembersCard";
 import { useState } from "react";
 import VisibilityToggle from "./VisibilityToggle";
+import UpdateYourAvatar from "./UpdateYourAvatar";
 
 const Profile = async () => {
   const user = await getServerSession(authOptions);
@@ -20,7 +21,7 @@ const Profile = async () => {
     },
   });
 
-  //console.log(`BEFORE TOGGLE: ${user.user.isVisible}`);
+  //console.log(`IMAGE_PROFILE: ${userProfile?.imageLink}`);
 
   return (
     <div className="flex flex-col items-center justify-center pt-[200px]">
@@ -32,17 +33,21 @@ const Profile = async () => {
       <MembersCard
         name={user.user.name!}
         email={user.user.email!}
+        image={userProfile?.imageLink ?? ""}
         links={userProfile?.link ?? ""}
         bio={userProfile?.bio ?? ""}
         skills={userProfile?.skills ?? ""}
       />
-      <UpdateProfileForm
-        name={user.user.name!}
-        email={user.user.email!}
-        links={userProfile?.link ?? ""}
-        biography={userProfile?.bio ?? ""}
-        skillset={userProfile?.skills ?? ""}
-      />
+      <div className="flex flex-row gap-3">
+        <UpdateProfileForm
+          name={user.user.name!}
+          email={user.user.email!}
+          image={userProfile?.imageLink ?? ""}
+          links={userProfile?.link ?? ""}
+          biography={userProfile?.bio ?? ""}
+          skillset={userProfile?.skills ?? ""}
+        />
+      </div>
       <VisibilityToggle isVisible={user.user.isVisible} />
     </div>
   );

@@ -8,9 +8,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const user = await getServerSession(req, res, authOptions).then(
       (res) => res?.user
     );
-    const { link, skills, bio, imageLink } = req.body;
 
-    //console.log(`update-prof ${imageLink}`);
+    const { content } = req.body;
 
     if (!user) {
       res.status(401).json({
@@ -18,27 +17,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    const updatedProfile = await db.profile.update({
-      where: {
-        userId: user?.id,
-      },
+    const createdPost = await db.post.create({
       data: {
-        bio,
-        link,
-        skills,
-        imageLink,
+        content,
+        authorId: user?.id,
       },
     });
 
     return res.status(200).json({
       error: "null",
-      updatedProfile,
+      createdPost,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       error: "Internal Server Error",
-      updatedProfile: null,
+      createdPost: null,
     });
   }
 };

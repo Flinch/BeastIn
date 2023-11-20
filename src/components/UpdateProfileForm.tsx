@@ -1,4 +1,5 @@
 "use client";
+import "@/styles/globals.css";
 import { FC, useState } from "react";
 import { FormEvent } from "react";
 import {
@@ -17,6 +18,10 @@ import { Textarea } from "@nextui-org/react";
 import ButtonHome from "./Button";
 import { useRouter } from "next/navigation";
 import { set } from "lodash";
+import { toast } from "react-toastify";
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 } from "uuid";
 
 interface UpdateProfileFormProps {
   name: string;
@@ -24,6 +29,7 @@ interface UpdateProfileFormProps {
   links: string;
   biography: string;
   skillset: string;
+  image: string;
 }
 
 const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
@@ -32,27 +38,56 @@ const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
   links,
   biography,
   skillset,
+  image,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [link, setLink] = useState(links);
   const [skills, setSkills] = useState(skillset);
   const [bio, setBio] = useState(biography);
+  const [imageLink, setImageLink] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fileName, setFileName] = useState<File | null>(null);
+  const [chooseFileButton, setChooseFileButton] = useState(false);
   const router = useRouter();
 
   const onSubmitForm = async () => {
-    console.log("here");
-    setIsModalOpen(false);
-    // event.preventDefault();
-    const profile = { link, skills, bio };
-    const response = await fetch("/api/update-profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(profile),
-    });
-    const data = await response.json();
+    try {
+      setIsLoading(true);
+      setIsModalOpen(false);
+      setChooseFileButton(false);
+      if (fileName === null) {
+        setImageLink(image);
+        return;
+      }
+      const imageRef = ref(storage, `images/${fileName.name + v4()}`);
+      await uploadBytes(imageRef, fileName);
 
-    router.refresh();
+      await getDownloadURL(imageRef).then(async (downloadURL) => {
+        const imageLink = downloadURL ? downloadURL : image;
+        const profile = { link, skills, bio, imageLink };
+        const response = await fetch("/api/update-profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(profile),
+        });
+        await response.json().then(() => {
+          console.log(response);
+          setIsLoading(false);
+          router.refresh();
+          toast.success("Profile Updated!");
+        });
+        console.log(`download_url: ${downloadURL}`);
+      });
+      //
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Something went wrong, please try again");
+    }
+  };
+
+  const revealChooseFileButton = () => {
+    setChooseFileButton(true);
   };
 
   const ToggleModalStateTrue = () => {
@@ -61,17 +96,18 @@ const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
 
   const ToggleModalStateFalse = () => {
     setIsModalOpen(false);
+    setChooseFileButton(false);
   };
   return (
     <>
       {" "}
       <ButtonHome
         onClick={ToggleModalStateTrue}
-        isLoading={false}
+        isLoading={isLoading}
         variant="home"
         className="mt-[25px]"
       >
-        Update Your Card
+        {isLoading ? "Updating" : "Update Your Card"}
       </ButtonHome>
       <form onSubmit={onSubmitForm}>
         <Modal
@@ -91,6 +127,25 @@ const UpdateProfileForm: FC<UpdateProfileFormProps> = ({
                   Edit Your Profile
                 </ModalHeader>
                 <ModalBody>
+                  {chooseFileButton ? (
+                    <input
+                      type="file"
+                      onChange={(event) => {
+                        setFileName(event.target.files![0]);
+                      }}
+                    ></input>
+                  ) : (
+                    <ButtonHome
+                      variant="home"
+                      isLoading={false}
+                      onClick={() => {
+                        revealChooseFileButton();
+                      }}
+                    >
+                      {" "}
+                      Change Your Avatar
+                    </ButtonHome>
+                  )}
                   <Input
                     autoFocus
                     label="name"

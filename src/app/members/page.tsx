@@ -10,6 +10,7 @@ const Page = async () => {
     link: string;
     bio: string;
     skills: string;
+    imageLink: string;
   }> = [];
   //   const [userArray, setUserArray] = useState<Array<userArrayType>>([]);
 
@@ -33,6 +34,7 @@ const Page = async () => {
         link: getUserProfile?.link ?? "",
         bio: getUserProfile?.bio ?? "",
         skills: getUserProfile?.skills ?? "",
+        imageLink: getUserProfile?.imageLink ?? "",
       });
     }
     return userArray;
@@ -41,7 +43,7 @@ const Page = async () => {
   let array = await fetchUsers();
 
   return (
-    <div className="grid-cols-3 justify-around flex pt-[100px]">
+    <div className="pl-[125px] grid-cols-3 gap-10 grid pt-[100px] ">
       {array.map((user, i) => {
         return (
           <MembersCard
@@ -51,6 +53,7 @@ const Page = async () => {
             links={user.link}
             skills={user.skills}
             bio={user.bio}
+            image={user.imageLink}
           />
         );
       })}

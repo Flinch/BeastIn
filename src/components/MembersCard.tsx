@@ -17,6 +17,7 @@ interface MembersCardProps {
   links: string;
   bio: string;
   skills: string;
+  image: string;
 }
 
 const MembersCard: FC<MembersCardProps> = ({
@@ -25,15 +26,17 @@ const MembersCard: FC<MembersCardProps> = ({
   links,
   bio,
   skills,
+  image,
 }) => {
+  //console.log(`IMAGE_Member: ${image}`);
   return (
-    <Card className="max-w-[400px]">
+    <Card className="max-w-[500px]">
       <CardHeader className="flex gap-4">
         <Image
           alt="nextui logo"
           height={10}
           radius="sm"
-          src="../beast-pfp.png"
+          src={image === "" ? "../beast-pfp.png" : image}
           width={80}
         />
         <div className="flex flex-col">
